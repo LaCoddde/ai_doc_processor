@@ -1,0 +1,17 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Virtual Environment
+ai_doc_venv/
+venv/
+
+# Python cache
+__pycache__/
+
+# Environment variables
+.env
