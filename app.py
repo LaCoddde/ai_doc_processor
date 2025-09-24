@@ -1,5 +1,6 @@
 # app.py
 
+import time
 import base64
 import io
 from dotenv import load_dotenv
@@ -64,14 +65,33 @@ async def process_document(file: UploadFile = File(...)):
     """
     Accepts an uploaded document image, processes it, and returns the extracted data.
     """
-    # Check for a valid file type
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image.")
     
-    # Read the content of the uploaded file
+    # --- Start Measuring ---
+    start_time = time.time()
+    
+    print(f"Received file: {file.filename}, Content-Type: {file.content_type}")
+
     image_bytes = await file.read()
     
-    # Pass the image bytes to our extraction function
-    extracted_data = extract_certificate_data(image_bytes)
+    try:
+        extracted_data = extract_certificate_data(image_bytes)
+        
+        # --- Stop Measuring on Success ---
+        end_time = time.time()
+        processing_time = end_time - start_time
+        
+        print(f"SUCCESS: Document processed in {processing_time:.2f} seconds.")
+        
+        return extracted_data
     
-    return extracted_data
+    except HTTPException as e:
+        # --- Log Failure ---
+        end_time = time.time()
+        processing_time = end_time - start_time
+        
+        print(f"FAILURE: Processing failed after {processing_time:.2f} seconds. Reason: {e.detail}")
+        
+        # Re-raise the exception to send the error response to the user
+        raise e
