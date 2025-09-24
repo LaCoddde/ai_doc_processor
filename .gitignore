@@ -1,0 +1,8 @@
+# Virtual Environment
+ai_doc_venv/
+
+# Python cache
+__pycache__/
+
+# Environment variables
+.env
